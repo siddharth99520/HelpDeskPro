@@ -71,6 +71,8 @@ public class Ticket {
     public User getAssignedTo() { return assignedTo; }
     public void setAssignedTo(User assignedTo) { this.assignedTo = assignedTo; }
     public Category getCategory() { return category; }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
     public Instant getCreatedAt() { return createdAt; }
     public Integer getVersion() { return version; }
 }
