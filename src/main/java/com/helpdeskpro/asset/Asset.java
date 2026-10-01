@@ -1,4 +1,6 @@
-package com.helpdeskpro.domain;
+package com.helpdeskpro.asset;
+
+import com.helpdeskpro.user.User;
 
 public class Asset {
     private String id;

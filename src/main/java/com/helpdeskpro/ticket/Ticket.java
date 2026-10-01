@@ -1,4 +1,8 @@
-package com.helpdeskpro.domain;
+package com.helpdeskpro.ticket;
+
+import com.helpdeskpro.user.User;
+import com.helpdeskpro.shared.Category;
+import com.helpdeskpro.asset.Asset;
 
 import java.time.Instant;
 

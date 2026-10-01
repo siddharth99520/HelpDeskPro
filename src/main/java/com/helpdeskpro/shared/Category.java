@@ -1,4 +1,4 @@
-package com.helpdeskpro.domain;
+package com.helpdeskpro.shared;
 
 public class Category {
     private String id;

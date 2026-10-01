@@ -1,11 +1,8 @@
-package com.helpdeskpro.service;
+package com.helpdeskpro.asset;
 
-import com.helpdeskpro.domain.Asset;
-import com.helpdeskpro.domain.AssetStatus;
-import com.helpdeskpro.domain.Role;
-import com.helpdeskpro.domain.User;
-import com.helpdeskpro.exception.AssetAlreadyAssignedException;
-import com.helpdeskpro.exception.InvalidTransitionException;
+import com.helpdeskpro.user.Role;
+import com.helpdeskpro.user.User;
+import com.helpdeskpro.shared.exception.InvalidTransitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +41,6 @@ class AssetServiceTest {
             assetService.assign(asset.getId(), engineer);
         });
         
-        // Should still be assigned to first employee
         assertEquals(employee, asset.getAssignedTo());
     }
 
@@ -61,7 +57,6 @@ class AssetServiceTest {
     void testInvalidTransition() {
         assetService.retireAsset(asset.getId());
         
-        // Cannot assign a retired asset
         assertThrows(InvalidTransitionException.class, () -> {
             assetService.assign(asset.getId(), employee);
         });

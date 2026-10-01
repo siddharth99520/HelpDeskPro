@@ -1,4 +1,4 @@
-package com.helpdeskpro.exception;
+package com.helpdeskpro.asset;
 
 public class AssetAlreadyAssignedException extends RuntimeException {
     public AssetAlreadyAssignedException(String message) {

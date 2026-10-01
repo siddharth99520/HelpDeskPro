@@ -1,16 +1,15 @@
-package com.helpdeskpro.service;
+package com.helpdeskpro.asset;
 
-import com.helpdeskpro.domain.Asset;
-import com.helpdeskpro.domain.AssetStatus;
-import com.helpdeskpro.domain.User;
-import com.helpdeskpro.exception.AssetAlreadyAssignedException;
-import com.helpdeskpro.exception.InvalidTransitionException;
+import com.helpdeskpro.user.User;
+import com.helpdeskpro.shared.exception.InvalidTransitionException;
+import org.springframework.stereotype.Service;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class AssetService {
     private final Map<String, Asset> assetStore = new ConcurrentHashMap<>();
     
@@ -39,7 +38,7 @@ public class AssetService {
         Asset asset = getAsset(assetId);
         
         if (asset.getStatus() == AssetStatus.ASSIGNED) {
-            throw new AssetAlreadyAssignedException("Asset is already assigned to " + asset.getAssignedTo().name());
+            throw new AssetAlreadyAssignedException("Asset is already assigned to " + asset.getAssignedTo().getName());
         }
         
         updateStatus(asset, AssetStatus.ASSIGNED);

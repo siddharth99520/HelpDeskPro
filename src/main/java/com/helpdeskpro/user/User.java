@@ -1,4 +1,4 @@
-package com.helpdeskpro.domain;
+package com.helpdeskpro.user;
 
 public class User {
     private String id;

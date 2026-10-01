@@ -1,11 +1,9 @@
-package com.helpdeskpro.service;
+package com.helpdeskpro.ticket;
 
-import com.helpdeskpro.domain.Category;
-import com.helpdeskpro.domain.Role;
-import com.helpdeskpro.domain.Ticket;
-import com.helpdeskpro.domain.TicketStatus;
-import com.helpdeskpro.domain.User;
-import com.helpdeskpro.exception.InvalidTransitionException;
+import com.helpdeskpro.shared.Category;
+import com.helpdeskpro.user.Role;
+import com.helpdeskpro.user.User;
+import com.helpdeskpro.shared.exception.InvalidTransitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -76,12 +74,10 @@ class TicketServiceTest {
     void testInvalidTransition() {
         Ticket ticket = ticketService.createTicket("Title", "Desc", employee, category);
         
-        // Cannot go directly from OPEN to IN_PROGRESS
         assertThrows(InvalidTransitionException.class, () -> {
             ticketService.updateStatus(ticket, TicketStatus.IN_PROGRESS);
         });
         
-        // Ensure state remains OPEN
         assertEquals(TicketStatus.OPEN, ticket.getStatus());
     }
 }

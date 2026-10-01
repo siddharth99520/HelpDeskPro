@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/helpdeskpro
+    username: admin
+    password: password
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/helpdeskpro
+    user: admin
+    password: password

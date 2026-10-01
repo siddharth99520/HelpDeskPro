@@ -13,7 +13,12 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Implemented base schema with all core tables and SLA timestamp columns.
   - Enforced asset double-assignment protection with a partial unique index.
   - Successfully ran Flyway migrations and validated raw SQL queries.
-- [ ] **Phase 3: Spring Boot REST Foundations**
+- [x] **Phase 3: Spring Boot REST Foundations**
+  - Converted the project to a Spring Boot 2.7 REST API.
+  - Re-packaged domain classes by business module (`ticket`, `asset`, `user`, `shared`).
+  - Added a `TicketController` with hard-coded POST and GET endpoints.
+  - Implemented a `@ControllerAdvice` global exception handler.
+  - Configured `application.yml` to point to the PostgreSQL database.
 - [ ] **Phase 4: Persistence Layer (JPA + DTOs)**
 - [ ] **Phase 5: Security: AuthN, AuthZ & Ownership**
 - [ ] **Phase 6: Workflow & Asset Lifecycle**
