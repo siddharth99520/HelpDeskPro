@@ -25,7 +25,11 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Replaced Maps with Spring Data JPA Repositories.
   - Enforced Bean Validation (`@Valid`) on the DTOs.
   - Added Testcontainers Postgres integration tests.
-- [ ] **Phase 5: Security: AuthN, AuthZ & Ownership**
+- [x] **Phase 5: Security: AuthN, AuthZ & Ownership**
+  - Secured endpoints using `spring-boot-starter-security`.
+  - Created a local `MockAuthFilter` using `X-User-Id` headers.
+  - Injected `UserPrincipal` dynamically into Controllers.
+  - Enforced ownership rules using `@PreAuthorize` at the Service layer.
 - [ ] **Phase 6: Workflow & Asset Lifecycle**
 - [ ] **Phase 7: SLA Engine & Audit Trail**
 - [ ] **Phase 8: Testing Consolidation, Docker & Observability**
