@@ -22,6 +22,7 @@ class TicketServiceTest {
     private TicketRepository ticketRepository;
     private UserRepository userRepository;
     private CategoryRepository categoryRepository;
+    private org.springframework.context.ApplicationEventPublisher eventPublisher;
     
     private User employee;
     private User engineer;
@@ -33,8 +34,9 @@ class TicketServiceTest {
         ticketRepository = Mockito.mock(TicketRepository.class);
         userRepository = Mockito.mock(UserRepository.class);
         categoryRepository = Mockito.mock(CategoryRepository.class);
+        eventPublisher = Mockito.mock(org.springframework.context.ApplicationEventPublisher.class);
         
-        ticketService = new TicketService(ticketRepository, userRepository, categoryRepository);
+        ticketService = new TicketService(ticketRepository, userRepository, categoryRepository, eventPublisher);
         
         employee = new User("u1", "Alice Employee", Role.EMPLOYEE);
         engineer = new User("u2", "Bob Engineer", Role.ENGINEER);
