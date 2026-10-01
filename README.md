@@ -48,5 +48,7 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Initialized Next.js frontend application.
   - Stripped default boilerplate and built a custom, sleek dark-mode design system using pure Vanilla CSS.
   - Implemented glassmorphism header, responsive dashboard, and micro-animations.
+  - Replaced MockAuthFilter with full JWT Authentication and created `AuthController`.
+  - Built a real frontend Login page and refactored pages to Client Components for JWT `localStorage` support.
 - [ ] **Phase 10: Optional AI Layer — Gemini + MCP**
 - [ ] **Phase 11: Documentation, Presentation & Interview Readiness**
