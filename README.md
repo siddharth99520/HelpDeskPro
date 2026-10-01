@@ -36,6 +36,6 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Wired REST endpoints to enforce pure-Java domain state machine rules.
 - [ ] **Phase 7: SLA Engine & Audit Trail**
 - [ ] **Phase 8: Testing Consolidation, Docker & Observability**
-- [ ] **Phase 9: Optional AI Layer — Gemini + MCP**
-- [ ] **Phase 10: Documentation, Presentation & Interview Readiness**
-- [ ] **Phase 11: Modern Web Application (Next.js + React)**
+- [ ] **Phase 9: Modern Web Application (Next.js + React)**
+- [ ] **Phase 10: Optional AI Layer — Gemini + MCP**
+- [ ] **Phase 11: Documentation, Presentation & Interview Readiness**
