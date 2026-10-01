@@ -30,7 +30,10 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Created a local `MockAuthFilter` using `X-User-Id` headers.
   - Injected `UserPrincipal` dynamically into Controllers.
   - Enforced ownership rules using `@PreAuthorize` at the Service layer.
-- [ ] **Phase 6: Workflow & Asset Lifecycle**
+- [x] **Phase 6: Workflow & Asset Lifecycle**
+  - Built `AssetController` to handle adding, assigning, repairing, and retiring assets.
+  - Added new Ticket endpoints: `PUT /api/tickets/{id}/assign` and `PUT /api/tickets/{id}/status`.
+  - Wired REST endpoints to enforce pure-Java domain state machine rules.
 - [ ] **Phase 7: SLA Engine & Audit Trail**
 - [ ] **Phase 8: Testing Consolidation, Docker & Observability**
 - [ ] **Phase 9: Optional AI Layer — Gemini + MCP**

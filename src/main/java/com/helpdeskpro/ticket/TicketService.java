@@ -63,6 +63,7 @@ public class TicketService {
             throw new InvalidTransitionException("Cannot transition ticket from " + ticket.getStatus() + " to " + newStatus);
         }
         ticket.setStatus(newStatus);
+        ticketRepository.save(ticket);
     }
     
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ENGINEER', 'MANAGER', 'ADMIN') or @securityService.isTicketOwner(#id, principal.id)")

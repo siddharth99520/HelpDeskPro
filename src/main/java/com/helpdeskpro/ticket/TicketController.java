@@ -29,4 +29,17 @@ public class TicketController {
         Ticket ticket = ticketService.getTicket(id);
         return new TicketResponse(ticket.getId(), ticket.getTitle(), ticket.getDescription(), ticket.getStatus().name());
     }
+
+    @PutMapping("/{id}/assign")
+    public TicketResponse assignTicket(@PathVariable String id, @Valid @RequestBody com.helpdeskpro.ticket.dto.TicketAssignRequest request) {
+        Ticket ticket = ticketService.assignTicket(id, request.getAssigneeId());
+        return new TicketResponse(ticket.getId(), ticket.getTitle(), ticket.getDescription(), ticket.getStatus().name());
+    }
+
+    @PutMapping("/{id}/status")
+    public TicketResponse updateStatus(@PathVariable String id, @Valid @RequestBody com.helpdeskpro.ticket.dto.TicketStatusRequest request) {
+        Ticket ticket = ticketService.getTicket(id);
+        ticketService.updateStatus(ticket, TicketStatus.valueOf(request.getStatus()));
+        return new TicketResponse(ticket.getId(), ticket.getTitle(), ticket.getDescription(), ticket.getStatus().name());
+    }
 }

@@ -34,8 +34,8 @@ public class AssetService {
         this.userRepository = userRepository;
     }
 
-    public void addAsset(Asset asset) {
-        assetRepository.save(asset);
+    public Asset addAsset(Asset asset) {
+        return assetRepository.save(asset);
     }
 
     public Asset getAsset(String id) {
