@@ -24,6 +24,13 @@ public class TicketController {
         return new TicketResponse(ticket.getId(), ticket.getTitle(), ticket.getDescription(), ticket.getStatus().name());
     }
 
+    @GetMapping
+    public java.util.List<TicketResponse> getAllTickets() {
+        return ticketService.getAllTickets().stream()
+                .map(ticket -> new TicketResponse(ticket.getId(), ticket.getTitle(), ticket.getDescription(), ticket.getStatus().name()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     @GetMapping("/{id}")
     public TicketResponse getTicket(@PathVariable String id) {
         Ticket ticket = ticketService.getTicket(id);

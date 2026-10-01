@@ -84,4 +84,8 @@ public class TicketService {
         return ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
     }
+
+    public java.util.List<Ticket> getAllTickets() {
+        return ticketRepository.findAll();
+    }
 }

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Home() {
   return (
     <div className="animate-fade-in flex flex-col gap-4">
@@ -7,7 +9,9 @@ export default function Home() {
           Streamline your ticketing, securely track assets, and automatically enforce SLAs with an enterprise-grade platform.
         </p>
         <div style={{ marginTop: '2rem' }} className="flex justify-center gap-2">
-          <button className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>View Tickets</button>
+          <Link href="/tickets" className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>
+            View Tickets
+          </Link>
         </div>
       </section>
 
