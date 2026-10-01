@@ -5,6 +5,7 @@ import com.helpdeskpro.shared.CategoryRepository;
 import com.helpdeskpro.user.User;
 import com.helpdeskpro.user.UserRepository;
 import com.helpdeskpro.shared.exception.InvalidTransitionException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
     
     private static final EnumMap<TicketStatus, Set<TicketStatus>> VALID_TRANSITIONS = new EnumMap<>(TicketStatus.class);
     
@@ -30,10 +32,11 @@ public class TicketService {
         VALID_TRANSITIONS.put(TicketStatus.CLOSED, Set.of());
     }
 
-    public TicketService(TicketRepository ticketRepository, UserRepository userRepository, CategoryRepository categoryRepository) {
+    public TicketService(TicketRepository ticketRepository, UserRepository userRepository, CategoryRepository categoryRepository, ApplicationEventPublisher eventPublisher) {
         this.ticketRepository = ticketRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Ticket createTicket(String title, String description, String createdById, String categoryId, String priority) {
@@ -43,7 +46,9 @@ public class TicketService {
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
                 
         Ticket ticket = new Ticket(UUID.randomUUID().toString(), title, description, createdBy, category, priority);
-        return ticketRepository.save(ticket);
+        Ticket saved = ticketRepository.save(ticket);
+        eventPublisher.publishEvent(new com.helpdeskpro.ticket.event.TicketStatusChangedEvent(this, saved, null, TicketStatus.OPEN, createdById));
+        return saved;
     }
 
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
@@ -62,8 +67,16 @@ public class TicketService {
         if (allowedStates == null || !allowedStates.contains(newStatus)) {
             throw new InvalidTransitionException("Cannot transition ticket from " + ticket.getStatus() + " to " + newStatus);
         }
+        TicketStatus oldStatus = ticket.getStatus();
         ticket.setStatus(newStatus);
         ticketRepository.save(ticket);
+        
+        String currentUserId = null;
+        Object principal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof com.helpdeskpro.security.UserPrincipal) {
+            currentUserId = ((com.helpdeskpro.security.UserPrincipal) principal).getId();
+        }
+        eventPublisher.publishEvent(new com.helpdeskpro.ticket.event.TicketStatusChangedEvent(this, ticket, oldStatus, newStatus, currentUserId));
     }
     
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ENGINEER', 'MANAGER', 'ADMIN') or @securityService.isTicketOwner(#id, principal.id)")

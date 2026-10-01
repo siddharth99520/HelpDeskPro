@@ -34,7 +34,11 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Built `AssetController` to handle adding, assigning, repairing, and retiring assets.
   - Added new Ticket endpoints: `PUT /api/tickets/{id}/assign` and `PUT /api/tickets/{id}/status`.
   - Wired REST endpoints to enforce pure-Java domain state machine rules.
-- [ ] **Phase 7: SLA Engine & Audit Trail**
+- [x] **Phase 7: SLA Engine & Audit Trail**
+  - Created `ticket_audits` Flyway migration.
+  - Built `TicketAudit` JPA entity and `TicketAuditRepository`.
+  - Implemented Spring `ApplicationEventPublisher` to broadcast `TicketStatusChangedEvent`.
+  - Added an `@EventListener` to asynchronously log state changes to the database.
 - [ ] **Phase 8: Testing Consolidation, Docker & Observability**
 - [ ] **Phase 9: Modern Web Application (Next.js + React)**
 - [ ] **Phase 10: Optional AI Layer — Gemini + MCP**
