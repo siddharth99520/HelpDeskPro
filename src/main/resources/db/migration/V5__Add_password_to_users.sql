@@ -1,0 +1,3 @@
+ALTER TABLE users ADD COLUMN password VARCHAR(255);
+UPDATE users SET password = '$2a$10$wE.VwVb/8xV1qY4oH1N2P.V8r5p3L6Fz3yM/O5Qz/e9m/v5M2bM9i';
+ALTER TABLE users ALTER COLUMN password SET NOT NULL;

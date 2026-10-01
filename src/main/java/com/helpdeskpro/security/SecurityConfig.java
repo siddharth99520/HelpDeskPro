@@ -16,9 +16,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final UserRepository userRepository;
+    private final JwtTokenProvider tokenProvider;
 
-    public SecurityConfig(UserRepository userRepository) {
+    public SecurityConfig(UserRepository userRepository, JwtTokenProvider tokenProvider) {
         this.userRepository = userRepository;
+        this.tokenProvider = tokenProvider;
     }
 
     @Bean
@@ -29,9 +31,10 @@ public class SecurityConfig {
             .and()
             .authorizeRequests()
                 .antMatchers("/actuator/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
             .and()
-            .addFilterBefore(new MockAuthFilter(userRepository), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthFilter(tokenProvider, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
