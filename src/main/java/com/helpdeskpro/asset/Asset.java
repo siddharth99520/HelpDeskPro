@@ -1,12 +1,26 @@
 package com.helpdeskpro.asset;
 
-import com.helpdeskpro.user.User;
+import javax.persistence.*;
+import java.time.Instant;
 
+@Entity
+@Table(name = "assets")
 public class Asset {
+    @Id
     private String id;
+    
     private String name;
+    
+    @Enumerated(EnumType.STRING)
     private AssetStatus status;
-    private User assignedTo;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private Instant createdAt;
+
+    @Version
+    private Integer version;
+
+    protected Asset() {}
 
     public Asset(String id, String name) {
         this.id = id;
@@ -29,12 +43,8 @@ public class Asset {
     public void setStatus(AssetStatus status) {
         this.status = status;
     }
-
-    public User getAssignedTo() {
-        return assignedTo;
-    }
-
-    public void setAssignedTo(User assignedTo) {
-        this.assignedTo = assignedTo;
+    
+    public Integer getVersion() {
+        return version;
     }
 }

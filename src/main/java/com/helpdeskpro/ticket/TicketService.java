@@ -1,19 +1,23 @@
 package com.helpdeskpro.ticket;
 
-import com.helpdeskpro.user.User;
 import com.helpdeskpro.shared.Category;
+import com.helpdeskpro.shared.CategoryRepository;
+import com.helpdeskpro.user.User;
+import com.helpdeskpro.user.UserRepository;
 import com.helpdeskpro.shared.exception.InvalidTransitionException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Transactional
 public class TicketService {
-    private final Map<String, Ticket> ticketStore = new ConcurrentHashMap<>();
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     
     private static final EnumMap<TicketStatus, Set<TicketStatus>> VALID_TRANSITIONS = new EnumMap<>(TicketStatus.class);
     
@@ -26,17 +30,30 @@ public class TicketService {
         VALID_TRANSITIONS.put(TicketStatus.CLOSED, Set.of());
     }
 
-    public Ticket createTicket(String title, String description, User createdBy, Category category) {
-        Ticket ticket = new Ticket(UUID.randomUUID().toString(), title, description, createdBy, category);
-        ticketStore.put(ticket.getId(), ticket);
-        return ticket;
+    public TicketService(TicketRepository ticketRepository, UserRepository userRepository, CategoryRepository categoryRepository) {
+        this.ticketRepository = ticketRepository;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
-    public Ticket assignTicket(String ticketId, User assignee) {
+    public Ticket createTicket(String title, String description, String createdById, String categoryId, String priority) {
+        User createdBy = userRepository.findById(createdById)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                
+        Ticket ticket = new Ticket(UUID.randomUUID().toString(), title, description, createdBy, category, priority);
+        return ticketRepository.save(ticket);
+    }
+
+    public Ticket assignTicket(String ticketId, String assigneeId) {
         Ticket ticket = getTicket(ticketId);
+        User assignee = userRepository.findById(assigneeId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                
         updateStatus(ticket, TicketStatus.ASSIGNED);
         ticket.setAssignedTo(assignee);
-        return ticket;
+        return ticketRepository.save(ticket);
     }
 
     public void updateStatus(Ticket ticket, TicketStatus newStatus) {
@@ -48,10 +65,7 @@ public class TicketService {
     }
     
     public Ticket getTicket(String id) {
-        Ticket ticket = ticketStore.get(id);
-        if (ticket == null) {
-            throw new IllegalArgumentException("Ticket not found");
-        }
-        return ticket;
+        return ticketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
     }
 }

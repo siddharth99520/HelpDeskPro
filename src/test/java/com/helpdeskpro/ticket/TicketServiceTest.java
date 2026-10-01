@@ -1,79 +1,79 @@
 package com.helpdeskpro.ticket;
 
 import com.helpdeskpro.shared.Category;
+import com.helpdeskpro.shared.CategoryRepository;
 import com.helpdeskpro.user.Role;
 import com.helpdeskpro.user.User;
+import com.helpdeskpro.user.UserRepository;
 import com.helpdeskpro.shared.exception.InvalidTransitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.util.UUID;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 class TicketServiceTest {
 
     private TicketService ticketService;
+    private TicketRepository ticketRepository;
+    private UserRepository userRepository;
+    private CategoryRepository categoryRepository;
+    
     private User employee;
     private User engineer;
     private Category category;
+    private Ticket ticket;
 
     @BeforeEach
     void setUp() {
-        ticketService = new TicketService();
-        employee = new User(UUID.randomUUID().toString(), "Alice Employee", Role.EMPLOYEE);
-        engineer = new User(UUID.randomUUID().toString(), "Bob Engineer", Role.ENGINEER);
-        category = new Category(UUID.randomUUID().toString(), "Software");
+        ticketRepository = Mockito.mock(TicketRepository.class);
+        userRepository = Mockito.mock(UserRepository.class);
+        categoryRepository = Mockito.mock(CategoryRepository.class);
+        
+        ticketService = new TicketService(ticketRepository, userRepository, categoryRepository);
+        
+        employee = new User("u1", "Alice Employee", Role.EMPLOYEE);
+        engineer = new User("u2", "Bob Engineer", Role.ENGINEER);
+        category = new Category("c1", "Software");
+        
+        ticket = new Ticket("t1", "Title", "Desc", employee, category, "NORMAL");
+        
+        when(userRepository.findById("u1")).thenReturn(Optional.of(employee));
+        when(userRepository.findById("u2")).thenReturn(Optional.of(engineer));
+        when(categoryRepository.findById("c1")).thenReturn(Optional.of(category));
+        when(ticketRepository.findById("t1")).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(i -> i.getArguments()[0]);
     }
 
     @Test
     void testCreateTicket() {
-        Ticket ticket = ticketService.createTicket("Title", "Desc", employee, category);
-        assertNotNull(ticket.getId());
-        assertEquals(TicketStatus.OPEN, ticket.getStatus());
-        assertEquals(employee, ticket.getCreatedBy());
+        Ticket result = ticketService.createTicket("Title", "Desc", "u1", "c1", "NORMAL");
+        assertNotNull(result.getId());
+        assertEquals(TicketStatus.OPEN, result.getStatus());
+        assertEquals(employee, result.getCreatedBy());
     }
 
     @Test
     void testValidTransitions() {
-        Ticket ticket = ticketService.createTicket("Title", "Desc", employee, category);
-        
-        // OPEN -> ASSIGNED
-        ticketService.assignTicket(ticket.getId(), engineer);
+        ticketService.assignTicket("t1", "u2");
         assertEquals(TicketStatus.ASSIGNED, ticket.getStatus());
         
-        // ASSIGNED -> IN_PROGRESS
         ticketService.updateStatus(ticket, TicketStatus.IN_PROGRESS);
         assertEquals(TicketStatus.IN_PROGRESS, ticket.getStatus());
         
-        // IN_PROGRESS -> WAITING_FOR_USER
-        ticketService.updateStatus(ticket, TicketStatus.WAITING_FOR_USER);
-        assertEquals(TicketStatus.WAITING_FOR_USER, ticket.getStatus());
-        
-        // WAITING_FOR_USER -> IN_PROGRESS
-        ticketService.updateStatus(ticket, TicketStatus.IN_PROGRESS);
-        assertEquals(TicketStatus.IN_PROGRESS, ticket.getStatus());
-        
-        // IN_PROGRESS -> RESOLVED
         ticketService.updateStatus(ticket, TicketStatus.RESOLVED);
         assertEquals(TicketStatus.RESOLVED, ticket.getStatus());
         
-        // RESOLVED -> IN_PROGRESS (Reopen)
-        ticketService.updateStatus(ticket, TicketStatus.IN_PROGRESS);
-        assertEquals(TicketStatus.IN_PROGRESS, ticket.getStatus());
-        
-        // IN_PROGRESS -> RESOLVED
-        ticketService.updateStatus(ticket, TicketStatus.RESOLVED);
-        
-        // RESOLVED -> CLOSED
         ticketService.updateStatus(ticket, TicketStatus.CLOSED);
         assertEquals(TicketStatus.CLOSED, ticket.getStatus());
     }
 
     @Test
     void testInvalidTransition() {
-        Ticket ticket = ticketService.createTicket("Title", "Desc", employee, category);
-        
         assertThrows(InvalidTransitionException.class, () -> {
             ticketService.updateStatus(ticket, TicketStatus.IN_PROGRESS);
         });

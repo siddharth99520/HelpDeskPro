@@ -1,17 +1,23 @@
 package com.helpdeskpro.asset;
 
 import com.helpdeskpro.user.User;
+import com.helpdeskpro.user.UserRepository;
 import com.helpdeskpro.shared.exception.InvalidTransitionException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.EnumMap;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
 @Service
+@Transactional
 public class AssetService {
-    private final Map<String, Asset> assetStore = new ConcurrentHashMap<>();
+    private final AssetRepository assetRepository;
+    private final AssetAssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
     
     private static final EnumMap<AssetStatus, Set<AssetStatus>> VALID_TRANSITIONS = new EnumMap<>(AssetStatus.class);
 
@@ -22,46 +28,72 @@ public class AssetService {
         VALID_TRANSITIONS.put(AssetStatus.RETIRED, Set.of());
     }
 
+    public AssetService(AssetRepository assetRepository, AssetAssignmentRepository assignmentRepository, UserRepository userRepository) {
+        this.assetRepository = assetRepository;
+        this.assignmentRepository = assignmentRepository;
+        this.userRepository = userRepository;
+    }
+
     public void addAsset(Asset asset) {
-        assetStore.put(asset.getId(), asset);
+        assetRepository.save(asset);
     }
 
     public Asset getAsset(String id) {
-        Asset asset = assetStore.get(id);
-        if (asset == null) {
-            throw new IllegalArgumentException("Asset not found");
-        }
-        return asset;
+        return assetRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
     }
 
-    public void assign(String assetId, User user) {
+    public void assign(String assetId, String userId) {
         Asset asset = getAsset(assetId);
         
         if (asset.getStatus() == AssetStatus.ASSIGNED) {
-            throw new AssetAlreadyAssignedException("Asset is already assigned to " + asset.getAssignedTo().getName());
+            Optional<AssetAssignment> currentAssignment = assignmentRepository.findByAssetIdAndReturnedAtIsNull(assetId);
+            String assigneeName = currentAssignment.map(a -> a.getUser().getName()).orElse("Unknown");
+            throw new AssetAlreadyAssignedException("Asset is already assigned to " + assigneeName);
         }
         
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                
         updateStatus(asset, AssetStatus.ASSIGNED);
-        asset.setAssignedTo(user);
+        assetRepository.save(asset);
+        
+        AssetAssignment assignment = new AssetAssignment(UUID.randomUUID().toString(), asset, user);
+        assignmentRepository.save(assignment);
     }
 
     public void returnAsset(String assetId) {
         Asset asset = getAsset(assetId);
         
         updateStatus(asset, AssetStatus.AVAILABLE);
-        asset.setAssignedTo(null);
+        assetRepository.save(asset);
+        
+        assignmentRepository.findByAssetIdAndReturnedAtIsNull(assetId).ifPresent(assignment -> {
+            assignment.setReturnedAt(Instant.now());
+            assignmentRepository.save(assignment);
+        });
     }
 
     public void repairAsset(String assetId) {
         Asset asset = getAsset(assetId);
         updateStatus(asset, AssetStatus.IN_REPAIR);
-        asset.setAssignedTo(null);
+        assetRepository.save(asset);
+        
+        assignmentRepository.findByAssetIdAndReturnedAtIsNull(assetId).ifPresent(assignment -> {
+            assignment.setReturnedAt(Instant.now());
+            assignmentRepository.save(assignment);
+        });
     }
     
     public void retireAsset(String assetId) {
         Asset asset = getAsset(assetId);
         updateStatus(asset, AssetStatus.RETIRED);
-        asset.setAssignedTo(null);
+        assetRepository.save(asset);
+        
+        assignmentRepository.findByAssetIdAndReturnedAtIsNull(assetId).ifPresent(assignment -> {
+            assignment.setReturnedAt(Instant.now());
+            assignmentRepository.save(assignment);
+        });
     }
 
     private void updateStatus(Asset asset, AssetStatus newStatus) {

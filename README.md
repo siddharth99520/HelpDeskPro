@@ -19,7 +19,12 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Added a `TicketController` with hard-coded POST and GET endpoints.
   - Implemented a `@ControllerAdvice` global exception handler.
   - Configured `application.yml` to point to the PostgreSQL database.
-- [ ] **Phase 4: Persistence Layer (JPA + DTOs)**
+- [x] **Phase 4: Persistence Layer (JPA + DTOs)**
+  - Mapped core entities (Ticket, Asset, User, Category) to the DB schema.
+  - Implemented `@Version` on Ticket and Asset for optimistic locking.
+  - Replaced Maps with Spring Data JPA Repositories.
+  - Enforced Bean Validation (`@Valid`) on the DTOs.
+  - Added Testcontainers Postgres integration tests.
 - [ ] **Phase 5: Security: AuthN, AuthZ & Ownership**
 - [ ] **Phase 6: Workflow & Asset Lifecycle**
 - [ ] **Phase 7: SLA Engine & Audit Trail**

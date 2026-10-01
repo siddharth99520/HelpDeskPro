@@ -2,12 +2,9 @@ package com.helpdeskpro.ticket;
 
 import com.helpdeskpro.ticket.dto.TicketRequest;
 import com.helpdeskpro.ticket.dto.TicketResponse;
-import com.helpdeskpro.user.User;
-import com.helpdeskpro.user.Role;
-import com.helpdeskpro.shared.Category;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -20,12 +17,11 @@ public class TicketController {
     }
 
     @PostMapping
-    public TicketResponse createTicket(@RequestBody TicketRequest request) {
-        // Hard-coded dependencies for Phase 3 before persistence layer
-        User user = new User(UUID.randomUUID().toString(), "Mock User", Role.EMPLOYEE);
-        Category category = new Category(UUID.randomUUID().toString(), "Mock Category");
+    public TicketResponse createTicket(@Valid @RequestBody TicketRequest request) {
+        // hard-coded user for now until Phase 5 (Security Auth context)
+        String mockUserId = "u1"; 
         
-        Ticket ticket = ticketService.createTicket(request.getTitle(), request.getDescription(), user, category);
+        Ticket ticket = ticketService.createTicket(request.getTitle(), request.getDescription(), mockUserId, request.getCategoryId(), request.getPriority());
         return new TicketResponse(ticket.getId(), ticket.getTitle(), ticket.getDescription(), ticket.getStatus().name());
     }
 
