@@ -44,6 +44,9 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Configured `application.yml` to expose `/actuator/health` and `/actuator/prometheus`.
   - Updated `SecurityConfig` to permit unauthenticated access to Actuator endpoints.
   - Built a multi-stage Java 11 `Dockerfile` to containerize the final application.
-- [ ] **Phase 9: Modern Web Application (Next.js + React)**
+- [x] **Phase 9: Modern Web Application (Next.js + React)**
+  - Initialized Next.js frontend application.
+  - Stripped default boilerplate and built a custom, sleek dark-mode design system using pure Vanilla CSS.
+  - Implemented glassmorphism header, responsive dashboard, and micro-animations.
 - [ ] **Phase 10: Optional AI Layer — Gemini + MCP**
 - [ ] **Phase 11: Documentation, Presentation & Interview Readiness**
