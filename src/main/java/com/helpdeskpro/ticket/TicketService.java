@@ -46,6 +46,7 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public Ticket assignTicket(String ticketId, String assigneeId) {
         Ticket ticket = getTicket(ticketId);
         User assignee = userRepository.findById(assigneeId)
@@ -64,6 +65,7 @@ public class TicketService {
         ticket.setStatus(newStatus);
     }
     
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ENGINEER', 'MANAGER', 'ADMIN') or @securityService.isTicketOwner(#id, principal.id)")
     public Ticket getTicket(String id) {
         return ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));

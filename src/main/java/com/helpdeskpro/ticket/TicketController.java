@@ -2,6 +2,8 @@ package com.helpdeskpro.ticket;
 
 import com.helpdeskpro.ticket.dto.TicketRequest;
 import com.helpdeskpro.ticket.dto.TicketResponse;
+import com.helpdeskpro.security.UserPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,11 +19,8 @@ public class TicketController {
     }
 
     @PostMapping
-    public TicketResponse createTicket(@Valid @RequestBody TicketRequest request) {
-        // hard-coded user for now until Phase 5 (Security Auth context)
-        String mockUserId = "u1"; 
-        
-        Ticket ticket = ticketService.createTicket(request.getTitle(), request.getDescription(), mockUserId, request.getCategoryId(), request.getPriority());
+    public TicketResponse createTicket(@Valid @RequestBody TicketRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+        Ticket ticket = ticketService.createTicket(request.getTitle(), request.getDescription(), principal.getId(), request.getCategoryId(), request.getPriority());
         return new TicketResponse(ticket.getId(), ticket.getTitle(), ticket.getDescription(), ticket.getStatus().name());
     }
 
