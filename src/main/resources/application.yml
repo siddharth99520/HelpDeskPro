@@ -8,3 +8,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/helpdeskpro
     user: admin
     password: password
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,metrics
+  metrics:
+    tags:
+      application: HelpDeskPro

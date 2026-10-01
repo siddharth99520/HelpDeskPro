@@ -28,6 +28,7 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
+                .antMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .addFilterBefore(new MockAuthFilter(userRepository), UsernamePasswordAuthenticationFilter.class);

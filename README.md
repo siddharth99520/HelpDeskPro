@@ -39,7 +39,11 @@ A phase-based Java + Spring Boot + PostgreSQL project.
   - Built `TicketAudit` JPA entity and `TicketAuditRepository`.
   - Implemented Spring `ApplicationEventPublisher` to broadcast `TicketStatusChangedEvent`.
   - Added an `@EventListener` to asynchronously log state changes to the database.
-- [ ] **Phase 8: Testing Consolidation, Docker & Observability**
+- [x] **Phase 8: Testing Consolidation, Docker & Observability**
+  - Added `spring-boot-starter-actuator` and `micrometer-registry-prometheus`.
+  - Configured `application.yml` to expose `/actuator/health` and `/actuator/prometheus`.
+  - Updated `SecurityConfig` to permit unauthenticated access to Actuator endpoints.
+  - Built a multi-stage Java 11 `Dockerfile` to containerize the final application.
 - [ ] **Phase 9: Modern Web Application (Next.js + React)**
 - [ ] **Phase 10: Optional AI Layer — Gemini + MCP**
 - [ ] **Phase 11: Documentation, Presentation & Interview Readiness**
