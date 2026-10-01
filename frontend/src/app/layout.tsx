@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import AuthNav from "./components/AuthNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,7 +22,7 @@ export default function RootLayout({
               HelpDeskPro
             </h1>
             <nav className="flex gap-2">
-              <button className="btn btn-primary">Sign In</button>
+              <AuthNav />
             </nav>
           </div>
         </header>

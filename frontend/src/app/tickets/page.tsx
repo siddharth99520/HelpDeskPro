@@ -1,4 +1,8 @@
+"use client";
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface Ticket {
   id: string;
@@ -8,30 +12,54 @@ interface Ticket {
   priority: string;
 }
 
-async function getTickets() {
-  try {
-    const res = await fetch('http://localhost:8080/api/tickets', {
-      headers: {
-        'X-User-Id': 'u1',
-        'Content-Type': 'application/json'
-      },
-      cache: 'no-store'
-    });
-    
-    if (!res.ok) {
-      console.error("Failed to fetch tickets", res.status);
-      return [];
-    }
-    
-    return res.json();
-  } catch (error) {
-    console.error("Error fetching tickets:", error);
-    return [];
-  }
-}
+export default function TicketsPage() {
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-export default async function TicketsPage() {
-  const tickets: Ticket[] = await getTickets();
+  useEffect(() => {
+    const fetchTickets = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:8080/api/tickets', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          router.push("/login");
+          return;
+        }
+
+        if (!res.ok) {
+          console.error("Failed to fetch tickets", res.status);
+          setLoading(false);
+          return;
+        }
+        
+        const data = await res.json();
+        setTickets(data);
+      } catch (error) {
+        console.error("Error fetching tickets:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTickets();
+  }, [router]);
+
+  if (loading) {
+    return <div style={{ textAlign: "center", padding: "4rem" }}>Loading tickets...</div>;
+  }
 
   return (
     <div className="animate-fade-in flex flex-col gap-4">
@@ -53,15 +81,17 @@ export default async function TicketsPage() {
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{ticket.description}</p>
               </div>
               <div className="flex gap-2">
-                <span style={{ 
-                  padding: '0.3rem 0.6rem', 
-                  borderRadius: '1rem', 
-                  fontSize: '0.8rem',
-                  background: 'var(--bg-base)',
-                  border: '1px solid var(--border)'
-                }}>
-                  {ticket.priority}
-                </span>
+                {ticket.priority && (
+                  <span style={{ 
+                    padding: '0.3rem 0.6rem', 
+                    borderRadius: '1rem', 
+                    fontSize: '0.8rem',
+                    background: 'var(--bg-base)',
+                    border: '1px solid var(--border)'
+                  }}>
+                    {ticket.priority}
+                  </span>
+                )}
                 <span style={{ 
                   padding: '0.3rem 0.6rem', 
                   borderRadius: '1rem', 
