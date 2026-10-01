@@ -31,3 +31,4 @@ A phase-based Java + Spring Boot + PostgreSQL project.
 - [ ] **Phase 8: Testing Consolidation, Docker & Observability**
 - [ ] **Phase 9: Optional AI Layer — Gemini + MCP**
 - [ ] **Phase 10: Documentation, Presentation & Interview Readiness**
+- [ ] **Phase 11: Modern Web Application (Next.js + React)**
