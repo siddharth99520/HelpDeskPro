@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -44,5 +43,33 @@ public class AuthController {
         }
         
         return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody Map<String, String> request) {
+        String id = request.get("userId");
+        String name = request.get("name");
+        String password = request.get("password");
+        String roleStr = request.get("role");
+
+        if (id == null || name == null || password == null || roleStr == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "userId, name, password, and role are required"));
+        }
+
+        if (userRepository.findById(id).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User already exists"));
+        }
+
+        Role role;
+        try {
+            role = Role.valueOf(roleStr);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid role"));
+        }
+
+        User user = new User(id, name, passwordEncoder.encode(password), role);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 }

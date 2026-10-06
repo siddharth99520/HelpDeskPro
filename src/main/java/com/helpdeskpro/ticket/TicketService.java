@@ -5,7 +5,11 @@ import com.helpdeskpro.shared.CategoryRepository;
 import com.helpdeskpro.user.User;
 import com.helpdeskpro.user.UserRepository;
 import com.helpdeskpro.shared.exception.InvalidTransitionException;
+import com.helpdeskpro.security.UserPrincipal;
+import com.helpdeskpro.ticket.event.TicketStatusChangedEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +55,7 @@ public class TicketService {
         return saved;
     }
 
-    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public Ticket assignTicket(String ticketId, String assigneeId) {
         Ticket ticket = getTicket(ticketId);
         User assignee = userRepository.findById(assigneeId)
@@ -59,7 +63,7 @@ public class TicketService {
                 
         updateStatus(ticket, TicketStatus.ASSIGNED);
         ticket.setAssignedTo(assignee);
-        return ticketRepository.save(ticket);
+        return ticket;
     }
 
     public void updateStatus(Ticket ticket, TicketStatus newStatus) {
@@ -72,14 +76,14 @@ public class TicketService {
         ticketRepository.save(ticket);
         
         String currentUserId = null;
-        Object principal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof com.helpdeskpro.security.UserPrincipal) {
-            currentUserId = ((com.helpdeskpro.security.UserPrincipal) principal).getId();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserPrincipal) {
+            currentUserId = ((UserPrincipal) principal).getId();
         }
-        eventPublisher.publishEvent(new com.helpdeskpro.ticket.event.TicketStatusChangedEvent(this, ticket, oldStatus, newStatus, currentUserId));
+        eventPublisher.publishEvent(new TicketStatusChangedEvent(this, ticket, oldStatus, newStatus, currentUserId));
     }
     
-    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ENGINEER', 'MANAGER', 'ADMIN') or @securityService.isTicketOwner(#id, principal.id)")
+    @PreAuthorize("hasAnyRole('ENGINEER', 'MANAGER', 'ADMIN') or @securityService.isTicketOwner(#id, principal.id)")
     public Ticket getTicket(String id) {
         return ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));

@@ -32,4 +32,25 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(com.helpdeskpro.shared.exception.InvalidTransitionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransitionException(com.helpdeskpro.shared.exception.InvalidTransitionException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(com.helpdeskpro.asset.AssetAlreadyAssignedException.class)
+    public ResponseEntity<ErrorResponse> handleAssetAlreadyAssignedException(com.helpdeskpro.asset.AssetAlreadyAssignedException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 }

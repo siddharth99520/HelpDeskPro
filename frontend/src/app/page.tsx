@@ -15,6 +15,11 @@ export default function Home() {
         </div>
       </section>
 
+      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+        <span style={{ background: 'var(--bg-surface-hover)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', color: 'var(--warning)' }}>
+          Sample Dashboard (Mockup)
+        </span>
+      </div>
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         <div className="card">
           <h3 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>Active Tickets</h3>
