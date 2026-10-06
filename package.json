@@ -1,0 +1,9 @@
+{
+  "name": "helpdeskpro-dev",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:backend": "mvn spring-boot:run",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "docker-compose up -d db flyway && cd frontend && npm install && cd .. && npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+  }
+}
