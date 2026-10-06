@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SuppressWarnings("null")
 class TicketRepositoryTest {
 
     @Container

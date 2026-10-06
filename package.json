@@ -2,7 +2,7 @@
   "name": "helpdeskpro-dev",
   "version": "1.0.0",
   "scripts": {
-    "dev:backend": "mvnw.cmd spring-boot:run",
+    "dev:backend": "set MAVEN_OPTS=-Dhttps.protocols=TLSv1.2 -Djdk.tls.client.protocols=TLSv1.2 && mvnw.cmd spring-boot:run",
     "dev:frontend": "cd frontend && npm run dev",
     "dev": "docker-compose up -d db flyway && cd frontend && npm install && cd .. && npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
   }

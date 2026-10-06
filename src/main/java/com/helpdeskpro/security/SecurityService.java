@@ -4,6 +4,7 @@ import com.helpdeskpro.ticket.TicketRepository;
 import org.springframework.stereotype.Service;
 
 @Service("securityService")
+@SuppressWarnings("null")
 public class SecurityService {
 
     private final TicketRepository ticketRepository;

@@ -19,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;

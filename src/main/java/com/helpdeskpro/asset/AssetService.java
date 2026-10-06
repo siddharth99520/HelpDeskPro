@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class AssetService {
     private final AssetRepository assetRepository;
     private final AssetAssignmentRepository assignmentRepository;
