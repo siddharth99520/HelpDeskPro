@@ -1,6 +1,57 @@
+"use client";
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+interface DashboardStats {
+  activeTickets: number;
+  immediateAttentionTickets: number;
+  assignedAssets: number;
+  slaCompliance: number;
+}
 
 export default function Home() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:8080/api/dashboard/stats', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem("token");
+          router.push("/login");
+          return;
+        }
+
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [router]);
+
   return (
     <div className="animate-fade-in flex flex-col gap-4">
       <section style={{ textAlign: 'center', padding: '4rem 0' }}>
@@ -15,26 +66,29 @@ export default function Home() {
         </div>
       </section>
 
-      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        <span style={{ background: 'var(--bg-surface-hover)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', color: 'var(--warning)' }}>
-          Sample Dashboard (Mockup)
-        </span>
-      </div>
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         <div className="card">
           <h3 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>Active Tickets</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>24</p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>4 require immediate attention</p>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+            {loading ? '...' : (stats?.activeTickets ?? 0)}
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            {loading ? '...' : (stats?.immediateAttentionTickets ?? 0)} require immediate attention
+          </p>
         </div>
         <div className="card">
           <h3 style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}>Assigned Assets</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>1,204</p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Across 3 regional offices</p>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+            {loading ? '...' : (stats?.assignedAssets ?? 0)}
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Across your organization</p>
         </div>
         <div className="card">
           <h3 style={{ color: 'var(--success)', marginBottom: '0.5rem' }}>SLA Compliance</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>98.2%</p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Up 2.4% from last month</p>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+            {loading ? '...' : `${stats?.slaCompliance ?? 0}%`}
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Overall resolution performance</p>
         </div>
       </section>
     </div>
