@@ -2,7 +2,6 @@ package com.helpdeskpro.user;
 
 import com.helpdeskpro.security.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,25 +15,24 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserRepository userRepository, JwtTokenProvider tokenProvider) {
+    public AuthController(UserRepository userRepository, JwtTokenProvider tokenProvider, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.tokenProvider = tokenProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Map<String, String> loginRequest) {
-        String userId = loginRequest.get("userId"); // Using ID as username for simplicity in this project
+        String userId = loginRequest.get("userId");
         String password = loginRequest.get("password");
 
         Optional<User> userOptional = userRepository.findById(userId);
         
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // Since we used a hardcoded hash in User.java constructor for backwards compatibility:
-            if (passwordEncoder.matches(password, user.getPassword()) || 
-                (password.equals("password") && user.getPassword().startsWith("$2a$10$wE.VwVb"))) {
+            if (passwordEncoder.matches(password, user.getPassword())) {
                 String jwt = tokenProvider.generateToken(user.getId());
                 return ResponseEntity.ok(Map.of(
                         "accessToken", jwt,

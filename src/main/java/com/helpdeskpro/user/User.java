@@ -31,7 +31,7 @@ public class User {
     public User(String id, String name, Role role) {
         this.id = id;
         this.name = name;
-        this.password = "$2a$10$wE.VwVb/8xV1qY4oH1N2P.V8r5p3L6Fz3yM/O5Qz/e9m/v5M2bM9i"; // Default "password" for backwards compatibility
+        this.password = "$2a$10$oSdAzelpsPd/y0zDbbJ/QeltrpADdbUmCzah.sQj0p0qPC7glPNF."; // BCrypt hash of "password"
         this.role = role;
     }
 

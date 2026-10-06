@@ -9,6 +9,10 @@ spring:
     user: admin
     password: password
 
+jwt:
+  secret: bXlTdXBlclNlY3JldEtleUZvckhlbHBEZXNrUHJvSldUQXV0aA==
+  expiration-ms: 3600000
+
 management:
   endpoints:
     web:

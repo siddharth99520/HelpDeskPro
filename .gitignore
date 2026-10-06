@@ -2,3 +2,12 @@ target/
 .idea/
 *.iml
 .vscode/
+node_modules/
+.next/
+*.class
+*.jar
+*.log
+.env
+hs_err_pid*
+replay_pid*
+.mvn/apache-maven-*
