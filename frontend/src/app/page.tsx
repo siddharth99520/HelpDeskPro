@@ -63,6 +63,9 @@ export default function Home() {
           <Link href="/tickets" className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>
             View Tickets
           </Link>
+          <Link href="/assets" className="btn" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem', background: 'var(--border)' }}>
+            View Assets
+          </Link>
         </div>
       </section>
 

@@ -44,6 +44,10 @@ public class AssetService {
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
     }
 
+    public java.util.List<Asset> getAllAssets() {
+        return assetRepository.findAll();
+    }
+
     public void assign(String assetId, String userId) {
         Asset asset = getAsset(assetId);
         

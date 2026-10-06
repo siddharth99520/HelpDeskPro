@@ -39,6 +39,19 @@ public class AssetController {
         return new AssetResponse(asset.getId(), asset.getName(), asset.getStatus().name(), assignedTo);
     }
 
+    @GetMapping
+    @PreAuthorize("isAuthenticated()") // Anyone authenticated can view assets list
+    public java.util.List<AssetResponse> getAllAssets() {
+        return assetService.getAllAssets().stream()
+                .map(asset -> {
+                    String assignedTo = assignmentRepository.findByAssetIdAndReturnedAtIsNull(asset.getId())
+                        .map(assignment -> assignment.getUser().getId())
+                        .orElse(null);
+                    return new AssetResponse(asset.getId(), asset.getName(), asset.getStatus().name(), assignedTo);
+                })
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     @PutMapping("/{id}/assign")
     public void assignAsset(@PathVariable String id, @Valid @RequestBody AssetAssignRequest request) {
         assetService.assign(id, request.getUserId());

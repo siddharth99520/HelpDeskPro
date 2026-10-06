@@ -65,7 +65,10 @@ export default function TicketsPage() {
     <div className="animate-fade-in flex flex-col gap-4">
       <div className="flex justify-between items-center" style={{ marginTop: '2rem' }}>
         <h2 style={{ fontSize: '2rem' }}>Active Tickets</h2>
-        <Link href="/" className="btn" style={{ background: 'var(--border)' }}>Back</Link>
+        <div className="flex gap-2">
+          <Link href="/tickets/new" className="btn btn-primary">Create Ticket</Link>
+          <Link href="/" className="btn" style={{ background: 'var(--border)' }}>Back</Link>
+        </div>
       </div>
       
       {tickets.length === 0 ? (
@@ -92,15 +95,47 @@ export default function TicketsPage() {
                     {ticket.priority}
                   </span>
                 )}
-                <span style={{ 
-                  padding: '0.3rem 0.6rem', 
-                  borderRadius: '1rem', 
-                  fontSize: '0.8rem',
-                  background: 'rgba(59, 130, 246, 0.1)',
-                  color: 'var(--primary)'
-                }}>
-                  {ticket.status}
-                </span>
+                <select
+                  value={ticket.status}
+                  onChange={async (e) => {
+                    const newStatus = e.target.value;
+                    const token = localStorage.getItem("token");
+                    try {
+                      const res = await fetch(`http://localhost:8080/api/tickets/${ticket.id}/status`, {
+                        method: 'PUT',
+                        headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                      });
+                      if (res.ok) {
+                        setTickets(tickets.map(t => t.id === ticket.id ? { ...t, status: newStatus } : t));
+                      } else {
+                        const err = await res.json();
+                        alert(err.message || 'Failed to update status');
+                      }
+                    } catch (err) {
+                      alert('Error updating status');
+                    }
+                  }}
+                  style={{ 
+                    padding: '0.3rem 0.6rem', 
+                    borderRadius: '1rem', 
+                    fontSize: '0.8rem',
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    color: 'var(--primary)',
+                    border: 'none',
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="OPEN">OPEN</option>
+                  <option value="ASSIGNED">ASSIGNED</option>
+                  <option value="IN_PROGRESS">IN_PROGRESS</option>
+                  <option value="RESOLVED">RESOLVED</option>
+                  <option value="CLOSED">CLOSED</option>
+                </select>
               </div>
             </div>
           ))}
