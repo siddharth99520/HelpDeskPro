@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [userId, setUserId] = useState("u1");
@@ -40,50 +43,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex justify-center items-center" style={{ minHeight: "70vh" }}>
-      <div className="card animate-fade-in" style={{ width: "100%", maxWidth: "400px", padding: "2rem" }}>
-        <h2 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", textAlign: "center" }}>Sign In</h2>
+    <div className="flex justify-center items-center min-h-[70vh]">
+      <Card className="w-full max-w-[400px] animate-fade-in">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Sign In</CardTitle>
+          <CardDescription>Enter your credentials to access the portal</CardDescription>
+        </CardHeader>
         
-        {error && (
-          <div style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", padding: "0.8rem", borderRadius: "0.5rem", marginBottom: "1rem", fontSize: "0.9rem" }}>
-            {error}
-          </div>
-        )}
+        <CardContent>
+          {error && (
+            <div className="bg-destructive/15 text-destructive p-3 rounded-md mb-4 text-sm font-medium text-center">
+              {error}
+            </div>
+          )}
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
-          <div>
-            <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>User ID</label>
-            <input 
-              type="text" 
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              style={{ width: "100%", padding: "0.8rem", borderRadius: "0.5rem", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text)" }}
-              required
-            />
-            <small style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>Try: u1, u2, or u3</small>
-          </div>
-          
-          <div>
-            <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "100%", padding: "0.8rem", borderRadius: "0.5rem", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text)" }}
-              required
-            />
-            <small style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>Default: password</small>
-          </div>
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">User ID</label>
+              <Input 
+                type="text" 
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                required
+                className="bg-muted/50"
+              />
+              <p className="text-xs text-muted-foreground">Try: u1, u2, or u3</p>
+            </div>
+            
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-muted-foreground">Password</label>
+              <Input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="bg-muted/50"
+              />
+              <p className="text-xs text-muted-foreground">Default: password</p>
+            </div>
 
-          <button type="submit" className="btn btn-primary" style={{ padding: "0.8rem", marginTop: "1rem" }}>
-            Sign In
-          </button>
-        </form>
+            <Button type="submit" className="w-full mt-2">
+              Sign In
+            </Button>
+          </form>
+        </CardContent>
 
-        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
-          <Link href="/" style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Back to Home</Link>
-        </div>
-      </div>
+        <CardFooter className="flex justify-center">
+          <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            Back to Home
+          </Link>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

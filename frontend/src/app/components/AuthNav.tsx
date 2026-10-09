@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
+
 export default function AuthNav() {
   const [userName, setUserName] = useState<string | null>(null);
   const router = useRouter();
@@ -29,13 +31,15 @@ export default function AuthNav() {
   if (userName) {
     return (
       <div className="flex items-center gap-4">
-        <span style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Welcome, {userName}</span>
-        <button onClick={handleLogout} className="btn" style={{ background: "transparent", border: "1px solid var(--border)" }}>Sign Out</button>
+        <span className="text-muted-foreground text-sm font-medium">Welcome, {userName}</span>
+        <Button onClick={handleLogout} variant="outline" size="sm">Sign Out</Button>
       </div>
     );
   }
 
   return (
-    <Link href="/login" className="btn btn-primary">Sign In</Link>
+    <Button asChild size="sm">
+      <Link href="/login">Sign In</Link>
+    </Button>
   );
 }

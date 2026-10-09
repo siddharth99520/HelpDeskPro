@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Asset {
   id: string;
@@ -82,68 +85,58 @@ export default function AssetsPage() {
   };
 
   if (loading) {
-    return <div style={{ textAlign: "center", padding: "4rem" }}>Loading assets...</div>;
+    return <div className="text-center p-16 text-muted-foreground">Loading assets...</div>;
   }
 
   return (
-    <div className="animate-fade-in flex flex-col gap-4">
-      <div className="flex justify-between items-center" style={{ marginTop: '2rem' }}>
-        <h2 style={{ fontSize: '2rem' }}>Assets Inventory</h2>
-        <div className="flex gap-2">
-          <Link href="/assets/new" className="btn btn-primary">Add Asset</Link>
-          <Link href="/" className="btn" style={{ background: 'var(--border)' }}>Back</Link>
+    <div className="flex flex-col gap-6 animate-fade-in py-8">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Assets Inventory</h2>
+          <p className="text-muted-foreground">Manage and track hardware across the organization.</p>
+        </div>
+        <div className="flex gap-4">
+          <Link href="/" className={buttonVariants({ variant: "outline" })}>
+            Back
+          </Link>
+          <Link href="/assets/new" className={buttonVariants()}>
+            Add Asset
+          </Link>
         </div>
       </div>
       
       {assets.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ color: 'var(--text-muted)' }}>No assets found in inventory.</p>
-        </div>
+        <Card className="text-center p-12 mt-8">
+          <p className="text-muted-foreground">No assets found in inventory.</p>
+        </Card>
       ) : (
-        <div style={{ display: 'grid', gap: '1rem' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {assets.map(asset => (
-            <div key={asset.id} className="card flex justify-between items-center">
-              <div>
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.2rem' }}>{asset.name}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ID: {asset.id}</p>
-                {asset.assignedTo && <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Assigned to: {asset.assignedTo}</p>}
-              </div>
-              <div className="flex gap-2">
-                <span style={{ 
-                  padding: '0.3rem 0.6rem', 
-                  borderRadius: '1rem', 
-                  fontSize: '0.8rem',
-                  background: 'rgba(59, 130, 246, 0.1)',
-                  color: 'var(--primary)'
-                }}>
+            <Card key={asset.id} className="hover:shadow-md transition-shadow flex flex-col justify-between">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-medium">{asset.name}</CardTitle>
+                <CardDescription className="text-xs">ID: {asset.id}</CardDescription>
+                {asset.assignedTo && (
+                  <p className="text-sm text-muted-foreground pt-2">Assigned to: <span className="font-semibold text-foreground">{asset.assignedTo}</span></p>
+                )}
+              </CardHeader>
+              <CardContent className="flex justify-between items-center pb-6">
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground border border-border">
                   {asset.status}
                 </span>
 
-                <select
-                  value=""
-                  onChange={(e) => {
-                    const action = e.target.value;
-                    if (action) {
-                      updateAssetStatus(asset.id, action);
-                    }
-                  }}
-                  style={{ 
-                    padding: '0.3rem 0.6rem', 
-                    borderRadius: '1rem', 
-                    fontSize: '0.8rem',
-                    background: 'var(--bg-base)',
-                    border: '1px solid var(--border)',
-                    outline: 'none',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <option value="" disabled>Actions...</option>
-                  {asset.status !== 'AVAILABLE' && <option value="return">Return Asset</option>}
-                  {asset.status !== 'IN_REPAIR' && asset.status !== 'RETIRED' && <option value="repair">Send to Repair</option>}
-                  {asset.status !== 'RETIRED' && <option value="retire">Retire Asset</option>}
-                </select>
-              </div>
-            </div>
+                <Select onValueChange={(val) => updateAssetStatus(asset.id, val)} value="">
+                  <SelectTrigger className="w-[140px] h-8 text-xs">
+                    <SelectValue placeholder="Actions..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {asset.status !== 'AVAILABLE' && <SelectItem value="return">Return Asset</SelectItem>}
+                    {asset.status !== 'IN_REPAIR' && asset.status !== 'RETIRED' && <SelectItem value="repair">Send to Repair</SelectItem>}
+                    {asset.status !== 'RETIRED' && <SelectItem value="retire">Retire Asset</SelectItem>}
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}

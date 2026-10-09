@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button, buttonVariants } from '@/components/ui/button';
 
 export default function CreateAssetPage() {
   const [name, setName] = useState('');
@@ -47,44 +50,43 @@ export default function CreateAssetPage() {
   };
 
   return (
-    <div className="animate-fade-in flex justify-center items-center" style={{ minHeight: '80vh' }}>
-      <div className="card" style={{ width: '100%', maxWidth: '500px' }}>
-        <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', textAlign: 'center' }}>Add New Asset</h2>
+    <div className="animate-fade-in flex justify-center items-center py-20">
+      <Card className="w-full max-w-[500px]">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">Add New Asset</CardTitle>
+          <CardDescription className="text-center">Register a new piece of hardware into inventory.</CardDescription>
+        </CardHeader>
         
-        {error && (
-          <div style={{ color: 'var(--error)', background: 'rgba(239, 68, 68, 0.1)', padding: '0.8rem', borderRadius: '4px', marginBottom: '1rem', fontSize: '0.9rem' }}>
-            {error}
-          </div>
-        )}
+        <CardContent>
+          {error && (
+            <div className="bg-destructive/15 text-destructive p-3 rounded-md mb-4 text-sm font-medium text-center">
+              {error}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Asset Name / Model</label>
-            <input
-              type="text"
-              className="input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="E.g., MacBook Pro M3"
-            />
-          </div>
-          
-          <div className="flex gap-2" style={{ marginTop: '1rem' }}>
-            <button 
-              type="submit" 
-              className="btn btn-primary" 
-              style={{ flex: 1 }}
-              disabled={loading}
-            >
-              {loading ? 'Adding...' : 'Add Asset'}
-            </button>
-            <Link href="/assets" className="btn" style={{ background: 'var(--border)' }}>
-              Cancel
-            </Link>
-          </div>
-        </form>
-      </div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Asset Name / Model</label>
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="E.g., MacBook Pro M3"
+              />
+            </div>
+            
+            <div className="flex gap-3 pt-2">
+              <Button type="submit" className="flex-1" disabled={loading}>
+                {loading ? 'Adding...' : 'Add Asset'}
+              </Button>
+              <Button type="button" variant="outline" asChild>
+                <Link href="/assets">Cancel</Link>
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

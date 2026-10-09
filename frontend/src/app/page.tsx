@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { buttonVariants } from '@/components/ui/button';
 
 interface DashboardStats {
   activeTickets: number;
@@ -53,46 +55,60 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="animate-fade-in flex flex-col gap-4">
-      <section style={{ textAlign: 'center', padding: '4rem 0' }}>
-        <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Manage IT Frictionlessly.</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+    <div className="flex flex-col gap-12 animate-fade-in py-16">
+      <section className="text-center space-y-6">
+        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Manage IT Frictionlessly.</h2>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Streamline your ticketing, securely track assets, and automatically enforce SLAs with an enterprise-grade platform.
         </p>
-        <div style={{ marginTop: '2rem' }} className="flex justify-center gap-2">
-          <Link href="/tickets" className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>
+        <div className="flex justify-center gap-4 pt-4">
+          <Link href="/tickets" className={buttonVariants({ size: "lg", className: "px-8 text-base" })}>
             View Tickets
           </Link>
-          <Link href="/assets" className="btn" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem', background: 'var(--border)' }}>
+          <Link href="/assets" className={buttonVariants({ variant: "outline", size: "lg", className: "px-8 text-base" })}>
             View Assets
           </Link>
         </div>
       </section>
 
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-        <div className="card">
-          <h3 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>Active Tickets</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-            {loading ? '...' : (stats?.activeTickets ?? 0)}
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            {loading ? '...' : (stats?.immediateAttentionTickets ?? 0)} require immediate attention
-          </p>
-        </div>
-        <div className="card">
-          <h3 style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}>Assigned Assets</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-            {loading ? '...' : (stats?.assignedAssets ?? 0)}
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Across your organization</p>
-        </div>
-        <div className="card">
-          <h3 style={{ color: 'var(--success)', marginBottom: '0.5rem' }}>SLA Compliance</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-            {loading ? '...' : `${stats?.slaCompliance ?? 0}%`}
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Overall resolution performance</p>
-        </div>
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-primary font-medium text-lg">Active Tickets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">
+              {loading ? '...' : (stats?.activeTickets ?? 0)}
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              {loading ? '...' : (stats?.immediateAttentionTickets ?? 0)} require immediate attention
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-indigo-500 font-medium text-lg">Assigned Assets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">
+              {loading ? '...' : (stats?.assignedAssets ?? 0)}
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Across your organization</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-emerald-500 font-medium text-lg">SLA Compliance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">
+              {loading ? '...' : `${stats?.slaCompliance ?? 0}%`}
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Overall resolution performance</p>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
